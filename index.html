@@ -1,81 +1,695 @@
-📊
-Humanica GA4 Dashboard
-Property: Humanica - GA4
-🔄 Compare:
-A
-→
-VS
-B
-→
-⚡ Compare
-Feb 1–28, 2026  vs  Feb 1–28, 2025
-📅 YTD Period (2026):
-All YTD
-Jan
-Feb
-Mar
-Apr
-Last 30d
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Humanica GA4 Dashboard 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh}
+header{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 60%,#0f3460 100%);color:white;padding:16px 28px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+header .logo{display:flex;align-items:center;gap:12px}
+header .icon{width:40px;height:40px;background:linear-gradient(135deg,#e94560,#0f3460);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+header h1{font-size:1.3rem;font-weight:700}
+header p{font-size:.78rem;color:#a0b4d0;margin-top:2px}
 
-From
-→
-To
-Apply
-Jan 1 – Apr 22, 2026
-📈 Overview
-⚡ Engagement
-🎯 Conversions
-🔀 Acquisition
-SESSIONS
-PERIOD A
-—
-PERIOD B
-—
-—
-Selected comparison periods
-USERS
-PERIOD A
-—
-PERIOD B
-—
-—
-Selected comparison periods
-PAGEVIEWS
-PERIOD A
-—
-PERIOD B
-—
-—
-Selected comparison periods
-NEW USERS
-PERIOD A
-—
-PERIOD B
-—
-—
-Selected comparison periods
-📈 2.1 Web Traffic — YTD 2026 with Period Comparison
-Full YTD 2026 daily sessions · Period A & B highlighted
+/* ── COMPARISON BAR ── */
+.cmp-bar{background:#1a1a2e;padding:12px 28px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:2px solid #0f3460}
+.cmp-label{font-size:.75rem;font-weight:700;color:#a0b4d0;white-space:nowrap}
+.period-block{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.07);border-radius:10px;padding:6px 12px}
+.period-block .tag{font-size:.7rem;font-weight:800;padding:3px 8px;border-radius:12px;white-space:nowrap}
+.tag-a{background:#3b82f6;color:white}
+.tag-b{background:#f59e0b;color:white}
+.period-block input[type=date]{background:transparent;border:none;color:white;font-size:.78rem;cursor:pointer;outline:none;width:120px}
+.period-block input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.6;cursor:pointer}
+.vs-badge{font-size:.9rem;font-weight:900;color:#e94560;padding:0 4px}
+.cmp-btn{padding:7px 20px;background:#e94560;color:white;border:none;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap}
+.cmp-btn:hover{background:#c73652}
+.cmp-result{margin-left:auto;font-size:.72rem;color:#a0b4d0;white-space:nowrap}
 
-YTD 2026 (daily)
+/* ── FILTER BAR ── */
+.filter-bar{background:white;border-bottom:1px solid #e5e7eb;padding:10px 28px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.filter-label{font-size:.78rem;font-weight:700;color:#555;white-space:nowrap}
+.presets{display:flex;gap:5px;flex-wrap:wrap}
+.preset-btn{padding:5px 13px;border-radius:20px;border:1.5px solid #e0e3eb;background:white;color:#555;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .18s;white-space:nowrap}
+.preset-btn:hover{border-color:#0f3460;color:#0f3460}
+.preset-btn.active{background:#0f3460;color:white;border-color:#0f3460}
+.fdiv{width:1px;height:24px;background:#e0e3eb}
+.date-inputs{display:flex;align-items:center;gap:6px}
+.date-inputs label{font-size:.72rem;color:#888;font-weight:600}
+.date-inputs input[type=date]{padding:5px 8px;border:1.5px solid #e0e3eb;border-radius:7px;font-size:.76rem;color:#333;background:#f8fafc;cursor:pointer;outline:none}
+.date-inputs input[type=date]:focus{border-color:#0f3460}
+.apply-btn{padding:6px 16px;background:#0f3460;color:white;border:none;border-radius:7px;font-size:.76rem;font-weight:700;cursor:pointer}
+.apply-btn:hover{background:#1a4a8a}
+.range-badge{margin-left:auto;background:#eff6ff;border:1px solid #bfdbfe;border-radius:20px;padding:4px 12px;font-size:.72rem;color:#1e40af;font-weight:600;white-space:nowrap}
 
-Period A (day index)
+/* ── CONTAINER ── */
+.container{max-width:1400px;margin:0 auto;padding:18px 24px}
+.tabs{display:flex;gap:5px;margin-bottom:18px;background:white;padding:5px;border-radius:11px;box-shadow:0 2px 10px rgba(0,0,0,.07);width:fit-content}
+.tab{padding:7px 18px;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:600;color:#666;border:none;background:transparent;transition:all .2s}
+.tab.active{background:#0f3460;color:white;box-shadow:0 2px 8px rgba(15,52,96,.3)}
+.tab:hover:not(.active){background:#f0f2f5;color:#0f3460}
 
-Period B (day index)
-YTD Daily Sessions (2026)
+/* ── KPI COMPARISON GRID ── */
+.kpi-cmp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.kpi-cmp-card{background:white;border-radius:12px;padding:16px 18px;box-shadow:0 2px 10px rgba(0,0,0,.07);border-top:4px solid transparent;position:relative;overflow:hidden}
+.kpi-cmp-card.blue{border-top-color:#3b82f6}
+.kpi-cmp-card.green{border-top-color:#10b981}
+.kpi-cmp-card.purple{border-top-color:#8b5cf6}
+.kpi-cmp-card.orange{border-top-color:#f59e0b}
+.kpi-label{font-size:.7rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.kpi-row{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}
+.kpi-a{font-size:1.6rem;font-weight:800;color:#1a1a2e;line-height:1}
+.kpi-b{font-size:1rem;font-weight:700;color:#f59e0b;line-height:1}
+.kpi-delta{font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:auto}
+.kpi-delta.up{background:#dcfce7;color:#16a34a}
+.kpi-delta.down{background:#fee2e2;color:#dc2626}
+.kpi-delta.flat{background:#f3f4f6;color:#6b7280}
+.kpi-sub{font-size:.68rem;color:#bbb;margin-top:4px}
 
-Period A vs B — Day-by-Day Sessions
+/* ── CHART CARDS ── */
+.chart-full{margin-bottom:16px}
+.chart-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.card{background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.07);padding:18px 20px}
+.card h3{font-size:.85rem;font-weight:700;color:#1a1a2e;margin-bottom:3px;display:flex;align-items:center;gap:6px}
+.card .sub{font-size:.72rem;color:#999;margin-bottom:14px}
+.chart-wrap canvas{max-height:260px}
+.chart-wrap.tall canvas{max-height:300px}
+.note{font-size:.68rem;color:#ccc;margin-top:6px;font-style:italic}
 
-📊 2.2 User Acquisition — First User Primary Channel Group
-YTD 2026 users by first-touch channel · Period A vs Period B sessions
-YTD 2026 — Users by First Touch Channel
+/* ── TABS ── */
+.tab-section{display:none}
+.tab-section.active{display:block}
 
-Period A vs B — Total Sessions
+/* ── ACQ TABLE ── */
+.acq-table{width:100%;border-collapse:collapse;font-size:.78rem}
+.acq-table th{background:#f8fafc;color:#555;font-weight:600;padding:9px 10px;text-align:left;border-bottom:2px solid #e5e7eb;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px}
+.acq-table td{padding:9px 10px;border-bottom:1px solid #f0f2f5;color:#333}
+.acq-table tr:hover td{background:#f8fafc}
+.ch-dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px}
+.bar-cell{display:flex;align-items:center;gap:7px}
+.bar-mini{height:5px;border-radius:3px;min-width:2px}
 
-* Channel breakdown by date requires additional API query
-📄 2.3 Top 10 Pages — by Page Title (YTD 2026)
-Screen page views by page title · Jan 1 – Apr 22, 2026
+/* ── PERIOD LEGEND ── */
+.legend-row{display:flex;gap:14px;margin-bottom:12px;font-size:.75rem;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:5px;font-weight:600;color:#555}
+.leg-dot{width:12px;height:4px;border-radius:2px}
+</style>
+</head>
+<body>
 
-⚡ 2.4 Top Events — by Event Name (YTD 2026)
-Event count by event name · Jan 1 – Apr 22, 2026
+<header>
+  <div class="logo">
+    <div class="icon">📊</div>
+    <div>
+      <h1>Humanica GA4 Dashboard</h1>
+      <p id="header-sub">Property: Humanica - GA4</p>
+    </div>
+  </div>
+</header>
 
+<!-- ═══ COMPARISON BAR ═══ -->
+<div class="cmp-bar">
+  <span class="cmp-label">🔄 Compare:</span>
+  <div class="period-block">
+    <span class="tag tag-a">A</span>
+    <input type="date" id="cmp-a-from" value="2026-02-01" min="2025-01-01" max="2026-04-22">
+    <span style="color:#a0b4d0;font-size:.75rem">→</span>
+    <input type="date" id="cmp-a-to"   value="2026-02-28" min="2025-01-01" max="2026-04-22">
+  </div>
+  <span class="vs-badge">VS</span>
+  <div class="period-block">
+    <span class="tag tag-b">B</span>
+    <input type="date" id="cmp-b-from" value="2025-02-01" min="2025-01-01" max="2026-04-22">
+    <span style="color:#a0b4d0;font-size:.75rem">→</span>
+    <input type="date" id="cmp-b-to"   value="2025-02-28" min="2025-01-01" max="2026-04-22">
+  </div>
+  <button class="cmp-btn" onclick="runComparison()">⚡ Compare</button>
+  <span class="cmp-result" id="cmp-result-label">Feb 1–28, 2026 &nbsp;vs&nbsp; Feb 1–28, 2025</span>
+</div>
+
+<!-- ═══ YTD FILTER BAR ═══ -->
+<div class="filter-bar">
+  <span class="filter-label">📅 YTD Period (2026):</span>
+  <div class="presets">
+    <button class="preset-btn active" onclick="applyPreset('all',this)">All YTD</button>
+    <button class="preset-btn" onclick="applyPreset('jan',this)">Jan</button>
+    <button class="preset-btn" onclick="applyPreset('feb',this)">Feb</button>
+    <button class="preset-btn" onclick="applyPreset('mar',this)">Mar</button>
+    <button class="preset-btn" onclick="applyPreset('apr',this)">Apr</button>
+    <button class="preset-btn" onclick="applyPreset('last30',this)">Last 30d</button>
+  </div>
+  <div class="fdiv"></div>
+  <div class="date-inputs">
+    <label>From</label>
+    <input type="date" id="ytd-from" value="2026-01-01" min="2026-01-01" max="2026-04-22">
+    <span style="color:#aaa">→</span>
+    <label>To</label>
+    <input type="date" id="ytd-to" value="2026-04-22" min="2026-01-01" max="2026-04-22">
+  </div>
+  <button class="apply-btn" onclick="applyYTD()">Apply</button>
+  <div class="range-badge" id="ytd-badge">Jan 1 – Apr 22, 2026</div>
+</div>
+
+<div class="container">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('overview',event)">📈 Overview</button>
+    <button class="tab" onclick="showTab('engagement',event)">⚡ Engagement</button>
+    <button class="tab" onclick="showTab('conversions',event)">🎯 Conversions</button>
+    <button class="tab" onclick="showTab('acquisition',event)">🔀 Acquisition</button>
+  </div>
+
+  <!-- ══ OVERVIEW ══ -->
+  <div id="tab-overview" class="tab-section active">
+
+    <!-- KPI Comparison Cards -->
+    <div class="kpi-cmp-grid">
+      <div class="kpi-cmp-card blue">
+        <div class="kpi-label">Sessions</div>
+        <div class="kpi-row">
+          <div>
+            <div style="font-size:.62rem;color:#3b82f6;font-weight:700;margin-bottom:2px">PERIOD A</div>
+            <div class="kpi-a" id="kpi-a-sess">—</div>
+          </div>
+          <div>
+            <div style="font-size:.62rem;color:#f59e0b;font-weight:700;margin-bottom:2px">PERIOD B</div>
+            <div class="kpi-b" id="kpi-b-sess">—</div>
+          </div>
+          <div class="kpi-delta flat" id="delta-sess">—</div>
+        </div>
+        <div class="kpi-sub">Selected comparison periods</div>
+      </div>
+      <div class="kpi-cmp-card green">
+        <div class="kpi-label">Users</div>
+        <div class="kpi-row">
+          <div>
+            <div style="font-size:.62rem;color:#3b82f6;font-weight:700;margin-bottom:2px">PERIOD A</div>
+            <div class="kpi-a" id="kpi-a-users">—</div>
+          </div>
+          <div>
+            <div style="font-size:.62rem;color:#f59e0b;font-weight:700;margin-bottom:2px">PERIOD B</div>
+            <div class="kpi-b" id="kpi-b-users">—</div>
+          </div>
+          <div class="kpi-delta flat" id="delta-users">—</div>
+        </div>
+        <div class="kpi-sub">Selected comparison periods</div>
+      </div>
+      <div class="kpi-cmp-card purple">
+        <div class="kpi-label">Pageviews</div>
+        <div class="kpi-row">
+          <div>
+            <div style="font-size:.62rem;color:#3b82f6;font-weight:700;margin-bottom:2px">PERIOD A</div>
+            <div class="kpi-a" id="kpi-a-pv">—</div>
+          </div>
+          <div>
+            <div style="font-size:.62rem;color:#f59e0b;font-weight:700;margin-bottom:2px">PERIOD B</div>
+            <div class="kpi-b" id="kpi-b-pv">—</div>
+          </div>
+          <div class="kpi-delta flat" id="delta-pv">—</div>
+        </div>
+        <div class="kpi-sub">Selected comparison periods</div>
+      </div>
+      <div class="kpi-cmp-card orange">
+        <div class="kpi-label">New Users</div>
+        <div class="kpi-row">
+          <div>
+            <div style="font-size:.62rem;color:#3b82f6;font-weight:700;margin-bottom:2px">PERIOD A</div>
+            <div class="kpi-a" id="kpi-a-new">—</div>
+          </div>
+          <div>
+            <div style="font-size:.62rem;color:#f59e0b;font-weight:700;margin-bottom:2px">PERIOD B</div>
+            <div class="kpi-b" id="kpi-b-new">—</div>
+          </div>
+          <div class="kpi-delta flat" id="delta-new">—</div>
+        </div>
+        <div class="kpi-sub">Selected comparison periods</div>
+      </div>
+    </div>
+
+    <!-- 2.1 Line: YTD + Period A + Period B -->
+    <div class="chart-full card">
+      <h3>📈 2.1 Web Traffic — YTD 2026 with Period Comparison</h3>
+      <div class="sub" id="line-sub">Full YTD 2026 daily sessions · Period A & B highlighted</div>
+      <div class="legend-row">
+        <div class="leg-item"><div class="leg-dot" style="background:#94a3b8"></div>YTD 2026 (daily)</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#3b82f6"></div>Period A (day index)</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#f59e0b"></div>Period B (day index)</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:.7rem;color:#888;margin-bottom:6px;font-weight:600">YTD Daily Sessions (2026)</div>
+          <div class="chart-wrap tall"><canvas id="chart-ytd-line"></canvas></div>
+        </div>
+        <div>
+          <div style="font-size:.7rem;color:#888;margin-bottom:6px;font-weight:600">Period A vs B — Day-by-Day Sessions</div>
+          <div class="chart-wrap tall"><canvas id="chart-cmp-line"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2.2 Bar: User Acquisition by Channel -->
+    <div class="chart-full card">
+      <h3>📊 2.2 User Acquisition — First User Primary Channel Group</h3>
+      <div class="sub">YTD 2026 users by first-touch channel · Period A vs Period B sessions</div>
+      <div style="display:grid;grid-template-columns:3fr 2fr;gap:16px">
+        <div>
+          <div style="font-size:.7rem;color:#888;margin-bottom:6px;font-weight:600">YTD 2026 — Users by First Touch Channel</div>
+          <div class="chart-wrap tall"><canvas id="chart-channel-ytd"></canvas></div>
+        </div>
+        <div>
+          <div style="font-size:.7rem;color:#888;margin-bottom:6px;font-weight:600">Period A vs B — Total Sessions</div>
+          <div class="chart-wrap tall"><canvas id="chart-channel-cmp"></canvas></div>
+          <p class="note">* Channel breakdown by date requires additional API query</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2.3 Bar: Top 10 Pages -->
+    <div class="chart-full card">
+      <h3>📄 2.3 Top 10 Pages — by Page Title (YTD 2026)</h3>
+      <div class="sub">Screen page views by page title · Jan 1 – Apr 22, 2026</div>
+      <div class="chart-wrap tall"><canvas id="chart-pages"></canvas></div>
+    </div>
+
+    <!-- 2.4 Bar: Top 10 Events -->
+    <div class="chart-full card">
+      <h3>⚡ 2.4 Top Events — by Event Name (YTD 2026)</h3>
+      <div class="sub">Event count by event name · Jan 1 – Apr 22, 2026</div>
+      <div class="chart-wrap tall"><canvas id="chart-events"></canvas></div>
+    </div>
+
+  </div><!-- /overview -->
+
+  <!-- ══ ENGAGEMENT ══ -->
+  <div id="tab-engagement" class="tab-section">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px">
+      <div class="kpi-cmp-card green"><div class="kpi-label">Avg Engagement Rate</div><div class="kpi-a" id="kpi-eng">—</div><div class="kpi-sub">YTD avg</div></div>
+      <div class="kpi-cmp-card blue"><div class="kpi-label">Avg Bounce Rate</div><div class="kpi-a" id="kpi-bnc">—</div><div class="kpi-sub">YTD avg</div></div>
+      <div class="kpi-cmp-card purple"><div class="kpi-label">Avg Session Duration</div><div class="kpi-a" id="kpi-dur">—</div><div class="kpi-sub">YTD avg</div></div>
+      <div class="kpi-cmp-card orange"><div class="kpi-label">Pages / Session</div><div class="kpi-a" id="kpi-pps">—</div><div class="kpi-sub">YTD avg</div></div>
+    </div>
+    <div class="chart-full card">
+      <h3>📊 Engagement Rate vs Bounce Rate</h3>
+      <div class="sub">Daily — selected YTD period</div>
+      <div class="chart-wrap tall"><canvas id="chart-eng"></canvas></div>
+    </div>
+    <div class="chart-grid-2">
+      <div class="card"><h3>⏱️ Session Duration</h3><div class="sub">Daily average (s)</div><div class="chart-wrap"><canvas id="chart-dur"></canvas></div></div>
+      <div class="card"><h3>📄 Pages / Session</h3><div class="sub">Daily average</div><div class="chart-wrap"><canvas id="chart-pps-ch"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- ══ CONVERSIONS ══ -->
+  <div id="tab-conversions" class="tab-section">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px">
+      <div class="kpi-cmp-card blue"><div class="kpi-label">Total Conversions</div><div class="kpi-a" id="kpi-conv">—</div><div class="kpi-sub">YTD</div></div>
+      <div class="kpi-cmp-card orange"><div class="kpi-label">Call Clicks</div><div class="kpi-a" id="kpi-call">—</div><div class="kpi-sub">YTD</div></div>
+      <div class="kpi-cmp-card green"><div class="kpi-label">Form Submits</div><div class="kpi-a" id="kpi-form">—</div><div class="kpi-sub">YTD</div></div>
+      <div class="kpi-cmp-card purple"><div class="kpi-label">Thank You Pages</div><div class="kpi-a" id="kpi-ty">—</div><div class="kpi-sub">YTD</div></div>
+    </div>
+    <div class="chart-full card">
+      <h3>🎯 Daily Conversions</h3><div class="sub">Total + type breakdown</div>
+      <div class="chart-wrap tall"><canvas id="chart-conv"></canvas></div>
+    </div>
+    <div class="chart-grid-2">
+      <div class="card"><h3>🥧 Conversion Mix</h3><div class="sub">By type</div><div class="chart-wrap"><canvas id="chart-conv-donut"></canvas></div></div>
+      <div class="card"><h3>📅 Monthly Conversions</h3><div class="sub">By month</div><div class="chart-wrap"><canvas id="chart-conv-monthly"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- ══ ACQUISITION ══ -->
+  <div id="tab-acquisition" class="tab-section">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px">
+      <div class="kpi-cmp-card blue"><div class="kpi-label">Top Channel</div><div class="kpi-a" style="font-size:1rem;margin-top:4px">Organic Search</div><div class="kpi-sub">14,431 sessions YTD</div></div>
+      <div class="kpi-cmp-card green"><div class="kpi-label">Total Channels</div><div class="kpi-a">12</div><div class="kpi-sub">Active</div></div>
+      <div class="kpi-cmp-card purple"><div class="kpi-label">Paid Sessions</div><div class="kpi-a">8,058</div><div class="kpi-sub">Paid Search+Video+Display</div></div>
+      <div class="kpi-cmp-card orange"><div class="kpi-label">Organic Sessions</div><div class="kpi-a">14,577</div><div class="kpi-sub">Organic Search+Social</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px">
+      <div class="card"><h3>📊 Sessions by Channel</h3><div class="sub">YTD 2026</div><div class="chart-wrap tall"><canvas id="chart-acq-bar"></canvas></div></div>
+      <div class="card"><h3>🥧 Channel Share</h3><div class="sub">% of total</div><div class="chart-wrap tall"><canvas id="chart-acq-donut"></canvas></div></div>
+    </div>
+    <div class="card"><h3>📋 Channel Performance</h3><div class="sub">YTD 2026</div><table class="acq-table" id="acq-table"></table></div>
+  </div>
+
+</div>
+
+<script>
+// ═══ RAW DATA ═══════════════════════════════════════════════════════════════
+
+const traffic2026 = [{"date":"2026-01-01","sessions":18,"users":14,"newusers":13,"screen_page_views":37},{"date":"2026-01-02","sessions":34,"users":27,"newusers":19,"screen_page_views":58},{"date":"2026-01-03","sessions":27,"users":20,"newusers":18,"screen_page_views":57},{"date":"2026-01-04","sessions":36,"users":32,"newusers":31,"screen_page_views":50},{"date":"2026-01-05","sessions":108,"users":76,"newusers":56,"screen_page_views":200},{"date":"2026-01-06","sessions":84,"users":61,"newusers":45,"screen_page_views":148},{"date":"2026-01-07","sessions":92,"users":68,"newusers":44,"screen_page_views":185},{"date":"2026-01-08","sessions":101,"users":75,"newusers":52,"screen_page_views":274},{"date":"2026-01-09","sessions":86,"users":67,"newusers":43,"screen_page_views":179},{"date":"2026-01-10","sessions":30,"users":25,"newusers":20,"screen_page_views":63},{"date":"2026-01-11","sessions":25,"users":22,"newusers":17,"screen_page_views":38},{"date":"2026-01-12","sessions":68,"users":47,"newusers":36,"screen_page_views":148},{"date":"2026-01-13","sessions":74,"users":52,"newusers":38,"screen_page_views":158},{"date":"2026-01-14","sessions":86,"users":64,"newusers":46,"screen_page_views":177},{"date":"2026-01-15","sessions":94,"users":73,"newusers":52,"screen_page_views":188},{"date":"2026-01-16","sessions":98,"users":70,"newusers":53,"screen_page_views":200},{"date":"2026-01-17","sessions":25,"users":21,"newusers":17,"screen_page_views":34},{"date":"2026-01-18","sessions":10,"users":8,"newusers":5,"screen_page_views":20},{"date":"2026-01-19","sessions":76,"users":55,"newusers":37,"screen_page_views":148},{"date":"2026-01-20","sessions":93,"users":73,"newusers":48,"screen_page_views":242},{"date":"2026-01-21","sessions":90,"users":65,"newusers":50,"screen_page_views":243},{"date":"2026-01-22","sessions":101,"users":68,"newusers":50,"screen_page_views":224},{"date":"2026-01-23","sessions":90,"users":67,"newusers":53,"screen_page_views":180},{"date":"2026-01-24","sessions":41,"users":29,"newusers":25,"screen_page_views":50},{"date":"2026-01-25","sessions":37,"users":32,"newusers":25,"screen_page_views":57},{"date":"2026-01-26","sessions":139,"users":111,"newusers":94,"screen_page_views":238},{"date":"2026-01-27","sessions":90,"users":62,"newusers":46,"screen_page_views":173},{"date":"2026-01-28","sessions":114,"users":83,"newusers":60,"screen_page_views":217},{"date":"2026-01-29","sessions":97,"users":65,"newusers":50,"screen_page_views":160},{"date":"2026-01-30","sessions":84,"users":58,"newusers":44,"screen_page_views":120},{"date":"2026-01-31","sessions":37,"users":27,"newusers":22,"screen_page_views":53},{"date":"2026-02-01","sessions":39,"users":35,"newusers":30,"screen_page_views":67},{"date":"2026-02-02","sessions":100,"users":78,"newusers":57,"screen_page_views":206},{"date":"2026-02-03","sessions":93,"users":63,"newusers":46,"screen_page_views":149},{"date":"2026-02-04","sessions":94,"users":67,"newusers":48,"screen_page_views":155},{"date":"2026-02-05","sessions":78,"users":57,"newusers":45,"screen_page_views":139},{"date":"2026-02-06","sessions":77,"users":54,"newusers":37,"screen_page_views":146},{"date":"2026-02-07","sessions":33,"users":25,"newusers":22,"screen_page_views":43},{"date":"2026-02-08","sessions":32,"users":26,"newusers":22,"screen_page_views":50},{"date":"2026-02-09","sessions":82,"users":65,"newusers":45,"screen_page_views":211},{"date":"2026-02-10","sessions":63,"users":53,"newusers":29,"screen_page_views":200},{"date":"2026-02-11","sessions":87,"users":60,"newusers":40,"screen_page_views":465},{"date":"2026-02-12","sessions":110,"users":81,"newusers":54,"screen_page_views":353},{"date":"2026-02-13","sessions":82,"users":66,"newusers":42,"screen_page_views":320},{"date":"2026-02-14","sessions":39,"users":34,"newusers":27,"screen_page_views":159},{"date":"2026-02-15","sessions":45,"users":35,"newusers":26,"screen_page_views":219},{"date":"2026-02-16","sessions":80,"users":56,"newusers":39,"screen_page_views":494},{"date":"2026-02-17","sessions":105,"users":82,"newusers":57,"screen_page_views":579},{"date":"2026-02-18","sessions":110,"users":83,"newusers":56,"screen_page_views":420},{"date":"2026-02-19","sessions":102,"users":78,"newusers":52,"screen_page_views":318},{"date":"2026-02-20","sessions":82,"users":66,"newusers":48,"screen_page_views":262},{"date":"2026-02-21","sessions":43,"users":38,"newusers":33,"screen_page_views":193},{"date":"2026-02-22","sessions":45,"users":35,"newusers":22,"screen_page_views":145},{"date":"2026-02-23","sessions":80,"users":65,"newusers":42,"screen_page_views":250},{"date":"2026-02-24","sessions":75,"users":62,"newusers":44,"screen_page_views":232},{"date":"2026-02-25","sessions":89,"users":66,"newusers":46,"screen_page_views":348},{"date":"2026-02-26","sessions":111,"users":86,"newusers":55,"screen_page_views":454},{"date":"2026-02-27","sessions":89,"users":72,"newusers":45,"screen_page_views":344},{"date":"2026-02-28","sessions":38,"users":32,"newusers":26,"screen_page_views":291},{"date":"2026-03-01","sessions":26,"users":24,"newusers":17,"screen_page_views":110},{"date":"2026-03-02","sessions":88,"users":70,"newusers":40,"screen_page_views":334},{"date":"2026-03-03","sessions":50,"users":43,"newusers":28,"screen_page_views":196},{"date":"2026-03-04","sessions":114,"users":98,"newusers":61,"screen_page_views":551},{"date":"2026-03-05","sessions":229,"users":203,"newusers":184,"screen_page_views":621},{"date":"2026-03-06","sessions":192,"users":173,"newusers":147,"screen_page_views":541},{"date":"2026-03-07","sessions":127,"users":114,"newusers":104,"screen_page_views":311},{"date":"2026-03-08","sessions":89,"users":80,"newusers":74,"screen_page_views":209},{"date":"2026-03-09","sessions":216,"users":190,"newusers":165,"screen_page_views":634},{"date":"2026-03-10","sessions":271,"users":235,"newusers":205,"screen_page_views":739},{"date":"2026-03-11","sessions":219,"users":186,"newusers":161,"screen_page_views":612},{"date":"2026-03-12","sessions":230,"users":200,"newusers":175,"screen_page_views":588},{"date":"2026-03-13","sessions":280,"users":250,"newusers":223,"screen_page_views":796},{"date":"2026-03-14","sessions":106,"users":93,"newusers":78,"screen_page_views":246},{"date":"2026-03-15","sessions":111,"users":94,"newusers":80,"screen_page_views":328},{"date":"2026-03-16","sessions":905,"users":835,"newusers":805,"screen_page_views":2346},{"date":"2026-03-17","sessions":947,"users":848,"newusers":800,"screen_page_views":2580},{"date":"2026-03-18","sessions":1060,"users":945,"newusers":889,"screen_page_views":2850},{"date":"2026-03-19","sessions":1035,"users":933,"newusers":872,"screen_page_views":2839},{"date":"2026-03-20","sessions":908,"users":828,"newusers":763,"screen_page_views":2465},{"date":"2026-03-21","sessions":580,"users":548,"newusers":512,"screen_page_views":1512},{"date":"2026-03-22","sessions":636,"users":588,"newusers":551,"screen_page_views":1542},{"date":"2026-03-23","sessions":966,"users":870,"newusers":804,"screen_page_views":2488},{"date":"2026-03-24","sessions":1123,"users":1029,"newusers":963,"screen_page_views":3661},{"date":"2026-03-25","sessions":1048,"users":940,"newusers":857,"screen_page_views":2886},{"date":"2026-03-26","sessions":1017,"users":922,"newusers":838,"screen_page_views":2558},{"date":"2026-03-27","sessions":1154,"users":1054,"newusers":976,"screen_page_views":3093},{"date":"2026-03-28","sessions":715,"users":660,"newusers":625,"screen_page_views":1793},{"date":"2026-03-29","sessions":399,"users":365,"newusers":328,"screen_page_views":956},{"date":"2026-03-30","sessions":812,"users":740,"newusers":663,"screen_page_views":2106},{"date":"2026-03-31","sessions":795,"users":699,"newusers":615,"screen_page_views":2188},{"date":"2026-04-01","sessions":688,"users":633,"newusers":576,"screen_page_views":1781},{"date":"2026-04-02","sessions":814,"users":752,"newusers":674,"screen_page_views":2189},{"date":"2026-04-03","sessions":690,"users":627,"newusers":559,"screen_page_views":2008},{"date":"2026-04-04","sessions":234,"users":221,"newusers":198,"screen_page_views":549},{"date":"2026-04-05","sessions":104,"users":88,"newusers":79,"screen_page_views":265},{"date":"2026-04-06","sessions":124,"users":104,"newusers":85,"screen_page_views":416},{"date":"2026-04-07","sessions":216,"users":183,"newusers":155,"screen_page_views":682},{"date":"2026-04-08","sessions":204,"users":172,"newusers":148,"screen_page_views":606},{"date":"2026-04-09","sessions":211,"users":178,"newusers":142,"screen_page_views":666},{"date":"2026-04-10","sessions":164,"users":142,"newusers":112,"screen_page_views":462},{"date":"2026-04-11","sessions":70,"users":62,"newusers":56,"screen_page_views":170},{"date":"2026-04-12","sessions":76,"users":66,"newusers":54,"screen_page_views":232},{"date":"2026-04-13","sessions":69,"users":65,"newusers":53,"screen_page_views":230},{"date":"2026-04-14","sessions":96,"users":81,"newusers":71,"screen_page_views":270},{"date":"2026-04-15","sessions":108,"users":96,"newusers":78,"screen_page_views":360},{"date":"2026-04-16","sessions":177,"users":153,"newusers":132,"screen_page_views":573},{"date":"2026-04-17","sessions":865,"users":806,"newusers":786,"screen_page_views":2287},{"date":"2026-04-18","sessions":847,"users":808,"newusers":778,"screen_page_views":2621},{"date":"2026-04-19","sessions":1117,"users":1065,"newusers":1031,"screen_page_views":3035},{"date":"2026-04-20","sessions":1302,"users":1207,"newusers":1150,"screen_page_views":3772},{"date":"2026-04-21","sessions":1330,"users":1241,"newusers":1181,"screen_page_views":4020},{"date":"2026-04-22","sessions":621,"users":595,"newusers":512,"screen_page_views":1496}];
+
+const traffic2025 = [{"date":"2025-01-01","sessions":730,"users":639,"newusers":632,"screen_page_views":771},{"date":"2025-01-02","sessions":472,"users":415,"newusers":411,"screen_page_views":573},{"date":"2025-01-03","sessions":532,"users":465,"newusers":461,"screen_page_views":664},{"date":"2025-01-04","sessions":236,"users":205,"newusers":204,"screen_page_views":267},{"date":"2025-01-05","sessions":293,"users":248,"newusers":242,"screen_page_views":355},{"date":"2025-01-06","sessions":670,"users":582,"newusers":577,"screen_page_views":797},{"date":"2025-01-07","sessions":572,"users":492,"newusers":475,"screen_page_views":821},{"date":"2025-01-08","sessions":547,"users":470,"newusers":455,"screen_page_views":726},{"date":"2025-01-09","sessions":593,"users":501,"newusers":486,"screen_page_views":918},{"date":"2025-01-10","sessions":485,"users":403,"newusers":393,"screen_page_views":628},{"date":"2025-01-11","sessions":249,"users":214,"newusers":208,"screen_page_views":306},{"date":"2025-01-12","sessions":233,"users":201,"newusers":200,"screen_page_views":316},{"date":"2025-01-13","sessions":541,"users":472,"newusers":464,"screen_page_views":796},{"date":"2025-01-14","sessions":610,"users":506,"newusers":491,"screen_page_views":946},{"date":"2025-01-15","sessions":546,"users":463,"newusers":452,"screen_page_views":742},{"date":"2025-01-16","sessions":530,"users":440,"newusers":429,"screen_page_views":837},{"date":"2025-01-17","sessions":516,"users":524,"newusers":511,"screen_page_views":3702},{"date":"2025-01-18","sessions":212,"users":176,"newusers":173,"screen_page_views":263},{"date":"2025-01-19","sessions":220,"users":194,"newusers":191,"screen_page_views":289},{"date":"2025-01-20","sessions":501,"users":429,"newusers":415,"screen_page_views":698},{"date":"2025-01-21","sessions":601,"users":508,"newusers":495,"screen_page_views":929},{"date":"2025-01-22","sessions":557,"users":473,"newusers":455,"screen_page_views":747},{"date":"2025-01-23","sessions":592,"users":512,"newusers":494,"screen_page_views":850},{"date":"2025-01-24","sessions":525,"users":439,"newusers":420,"screen_page_views":734},{"date":"2025-01-25","sessions":326,"users":273,"newusers":267,"screen_page_views":400},{"date":"2025-01-26","sessions":292,"users":248,"newusers":244,"screen_page_views":368},{"date":"2025-01-27","sessions":589,"users":509,"newusers":498,"screen_page_views":781},{"date":"2025-01-28","sessions":512,"users":437,"newusers":422,"screen_page_views":654},{"date":"2025-01-29","sessions":552,"users":477,"newusers":461,"screen_page_views":736},{"date":"2025-01-30","sessions":579,"users":490,"newusers":478,"screen_page_views":799},{"date":"2025-01-31","sessions":577,"users":495,"newusers":479,"screen_page_views":690},{"date":"2025-02-01","sessions":329,"users":288,"newusers":284,"screen_page_views":412},{"date":"2025-02-02","sessions":323,"users":276,"newusers":268,"screen_page_views":414},{"date":"2025-02-03","sessions":560,"users":489,"newusers":485,"screen_page_views":737},{"date":"2025-02-04","sessions":657,"users":569,"newusers":553,"screen_page_views":926},{"date":"2025-02-05","sessions":617,"users":523,"newusers":510,"screen_page_views":930},{"date":"2025-02-06","sessions":595,"users":509,"newusers":495,"screen_page_views":772},{"date":"2025-02-07","sessions":500,"users":444,"newusers":437,"screen_page_views":707},{"date":"2025-02-08","sessions":441,"users":404,"newusers":392,"screen_page_views":567},{"date":"2025-02-09","sessions":298,"users":251,"newusers":241,"screen_page_views":400},{"date":"2025-02-10","sessions":576,"users":504,"newusers":490,"screen_page_views":801},{"date":"2025-02-11","sessions":607,"users":520,"newusers":503,"screen_page_views":828},{"date":"2025-02-12","sessions":394,"users":343,"newusers":336,"screen_page_views":542},{"date":"2025-02-13","sessions":565,"users":496,"newusers":482,"screen_page_views":831},{"date":"2025-02-14","sessions":515,"users":444,"newusers":424,"screen_page_views":665},{"date":"2025-02-15","sessions":347,"users":311,"newusers":304,"screen_page_views":421},{"date":"2025-02-16","sessions":312,"users":277,"newusers":274,"screen_page_views":402},{"date":"2025-02-17","sessions":570,"users":508,"newusers":493,"screen_page_views":790},{"date":"2025-02-18","sessions":708,"users":623,"newusers":606,"screen_page_views":967},{"date":"2025-02-19","sessions":761,"users":660,"newusers":642,"screen_page_views":1063},{"date":"2025-02-20","sessions":716,"users":597,"newusers":581,"screen_page_views":1029},{"date":"2025-02-21","sessions":710,"users":626,"newusers":604,"screen_page_views":1020},{"date":"2025-02-22","sessions":426,"users":369,"newusers":353,"screen_page_views":657},{"date":"2025-02-23","sessions":401,"users":361,"newusers":351,"screen_page_views":693},{"date":"2025-02-24","sessions":792,"users":696,"newusers":678,"screen_page_views":1119},{"date":"2025-02-25","sessions":770,"users":635,"newusers":614,"screen_page_views":1300},{"date":"2025-02-26","sessions":759,"users":637,"newusers":618,"screen_page_views":1184},{"date":"2025-02-27","sessions":776,"users":657,"newusers":633,"screen_page_views":1172},{"date":"2025-02-28","sessions":764,"users":628,"newusers":602,"screen_page_views":1198},{"date":"2025-03-01","sessions":479,"users":408,"newusers":384,"screen_page_views":673},{"date":"2025-03-02","sessions":422,"users":368,"newusers":353,"screen_page_views":589},{"date":"2025-03-03","sessions":755,"users":657,"newusers":639,"screen_page_views":1167},{"date":"2025-03-04","sessions":694,"users":586,"newusers":567,"screen_page_views":1067},{"date":"2025-03-05","sessions":726,"users":616,"newusers":602,"screen_page_views":1101},{"date":"2025-03-06","sessions":756,"users":640,"newusers":611,"screen_page_views":1113},{"date":"2025-03-07","sessions":576,"users":488,"newusers":470,"screen_page_views":901},{"date":"2025-03-08","sessions":341,"users":282,"newusers":271,"screen_page_views":441},{"date":"2025-03-09","sessions":352,"users":308,"newusers":299,"screen_page_views":537},{"date":"2025-03-10","sessions":685,"users":582,"newusers":568,"screen_page_views":1140},{"date":"2025-03-11","sessions":710,"users":607,"newusers":579,"screen_page_views":1374},{"date":"2025-03-12","sessions":733,"users":621,"newusers":585,"screen_page_views":1027},{"date":"2025-03-13","sessions":699,"users":592,"newusers":566,"screen_page_views":1059},{"date":"2025-03-14","sessions":567,"users":470,"newusers":445,"screen_page_views":1024},{"date":"2025-03-15","sessions":439,"users":378,"newusers":359,"screen_page_views":683},{"date":"2025-03-16","sessions":423,"users":375,"newusers":361,"screen_page_views":675},{"date":"2025-03-17","sessions":911,"users":750,"newusers":717,"screen_page_views":1820},{"date":"2025-03-18","sessions":873,"users":715,"newusers":679,"screen_page_views":1637},{"date":"2025-03-19","sessions":824,"users":688,"newusers":640,"screen_page_views":1521},{"date":"2025-03-20","sessions":789,"users":652,"newusers":603,"screen_page_views":1429},{"date":"2025-03-21","sessions":698,"users":581,"newusers":532,"screen_page_views":1179},{"date":"2025-03-22","sessions":391,"users":345,"newusers":340,"screen_page_views":480},{"date":"2025-03-23","sessions":356,"users":318,"newusers":311,"screen_page_views":465},{"date":"2025-03-24","sessions":807,"users":706,"newusers":685,"screen_page_views":1183},{"date":"2025-03-25","sessions":781,"users":675,"newusers":657,"screen_page_views":1033},{"date":"2025-03-26","sessions":699,"users":588,"newusers":571,"screen_page_views":1022},{"date":"2025-03-27","sessions":651,"users":563,"newusers":544,"screen_page_views":1085},{"date":"2025-03-28","sessions":545,"users":484,"newusers":467,"screen_page_views":796},{"date":"2025-03-29","sessions":332,"users":303,"newusers":298,"screen_page_views":401},{"date":"2025-03-30","sessions":385,"users":353,"newusers":349,"screen_page_views":510},{"date":"2025-03-31","sessions":667,"users":584,"newusers":574,"screen_page_views":930},{"date":"2025-04-01","sessions":491,"users":408,"newusers":393,"screen_page_views":678},{"date":"2025-04-02","sessions":588,"users":489,"newusers":469,"screen_page_views":1107},{"date":"2025-04-03","sessions":568,"users":483,"newusers":467,"screen_page_views":944},{"date":"2025-04-04","sessions":791,"users":696,"newusers":673,"screen_page_views":1132},{"date":"2025-04-05","sessions":462,"users":424,"newusers":416,"screen_page_views":628},{"date":"2025-04-06","sessions":464,"users":670,"newusers":673,"screen_page_views":8249},{"date":"2025-04-07","sessions":608,"users":681,"newusers":667,"screen_page_views":4855},{"date":"2025-04-08","sessions":890,"users":808,"newusers":795,"screen_page_views":1190},{"date":"2025-04-09","sessions":818,"users":722,"newusers":701,"screen_page_views":1106},{"date":"2025-04-10","sessions":779,"users":687,"newusers":672,"screen_page_views":1306},{"date":"2025-04-11","sessions":664,"users":581,"newusers":565,"screen_page_views":1074},{"date":"2025-04-12","sessions":476,"users":439,"newusers":433,"screen_page_views":682},{"date":"2025-04-22","sessions":863,"users":777,"newusers":763,"screen_page_views":1139}];
+
+const engagementRaw=[{"date":"2026-01-01","bounce_rate":0.3333,"engagement_rate":0.6667,"average_session_duration":352.55,"screen_page_views_per_session":2.06},{"date":"2026-01-02","bounce_rate":0.4118,"engagement_rate":0.5882,"average_session_duration":620.75,"screen_page_views_per_session":1.71},{"date":"2026-01-05","bounce_rate":0.4722,"engagement_rate":0.5278,"average_session_duration":341.76,"screen_page_views_per_session":1.85},{"date":"2026-01-07","bounce_rate":0.4891,"engagement_rate":0.5109,"average_session_duration":509.04,"screen_page_views_per_session":2.01},{"date":"2026-01-08","bounce_rate":0.4059,"engagement_rate":0.5941,"average_session_duration":2084.39,"screen_page_views_per_session":2.71},{"date":"2026-01-12","bounce_rate":0.5294,"engagement_rate":0.4706,"average_session_duration":483.52,"screen_page_views_per_session":2.18},{"date":"2026-01-14","bounce_rate":0.3721,"engagement_rate":0.6279,"average_session_duration":424.92,"screen_page_views_per_session":2.06},{"date":"2026-01-16","bounce_rate":0.4898,"engagement_rate":0.5102,"average_session_duration":442.63,"screen_page_views_per_session":2.04},{"date":"2026-01-19","bounce_rate":0.4079,"engagement_rate":0.5921,"average_session_duration":428.89,"screen_page_views_per_session":1.95},{"date":"2026-01-20","bounce_rate":0.3656,"engagement_rate":0.6344,"average_session_duration":849.96,"screen_page_views_per_session":2.6},{"date":"2026-01-21","bounce_rate":0.4333,"engagement_rate":0.5667,"average_session_duration":488.34,"screen_page_views_per_session":2.7},{"date":"2026-01-22","bounce_rate":0.4752,"engagement_rate":0.5248,"average_session_duration":514.97,"screen_page_views_per_session":2.22},{"date":"2026-01-26","bounce_rate":0.6331,"engagement_rate":0.3669,"average_session_duration":380.09,"screen_page_views_per_session":1.71},{"date":"2026-01-28","bounce_rate":0.3684,"engagement_rate":0.6316,"average_session_duration":458.21,"screen_page_views_per_session":1.9},{"date":"2026-02-01","bounce_rate":0.4872,"engagement_rate":0.5128,"average_session_duration":123.51,"screen_page_views_per_session":1.72},{"date":"2026-02-02","bounce_rate":0.44,"engagement_rate":0.56,"average_session_duration":617.33,"screen_page_views_per_session":2.06},{"date":"2026-02-05","bounce_rate":0.4872,"engagement_rate":0.5128,"average_session_duration":344.04,"screen_page_views_per_session":1.78},{"date":"2026-02-09","bounce_rate":0.3415,"engagement_rate":0.6585,"average_session_duration":285.1,"screen_page_views_per_session":2.57},{"date":"2026-02-10","bounce_rate":0.1111,"engagement_rate":0.8889,"average_session_duration":285.82,"screen_page_views_per_session":3.17},{"date":"2026-02-11","bounce_rate":0.092,"engagement_rate":0.908,"average_session_duration":620.24,"screen_page_views_per_session":5.34},{"date":"2026-02-12","bounce_rate":0.1091,"engagement_rate":0.8909,"average_session_duration":438.16,"screen_page_views_per_session":3.21},{"date":"2026-02-16","bounce_rate":0.1125,"engagement_rate":0.8875,"average_session_duration":750.89,"screen_page_views_per_session":6.18},{"date":"2026-02-17","bounce_rate":0.1048,"engagement_rate":0.8952,"average_session_duration":797.16,"screen_page_views_per_session":5.51},{"date":"2026-02-18","bounce_rate":0.0636,"engagement_rate":0.9364,"average_session_duration":525.71,"screen_page_views_per_session":3.82},{"date":"2026-02-19","bounce_rate":0.1373,"engagement_rate":0.8627,"average_session_duration":244.34,"screen_page_views_per_session":3.12},{"date":"2026-02-23","bounce_rate":0.1,"engagement_rate":0.9,"average_session_duration":419.63,"screen_page_views_per_session":3.13},{"date":"2026-02-25","bounce_rate":0.1461,"engagement_rate":0.8539,"average_session_duration":494.38,"screen_page_views_per_session":3.91},{"date":"2026-02-26","bounce_rate":0.0901,"engagement_rate":0.9099,"average_session_duration":412.0,"screen_page_views_per_session":4.09},{"date":"2026-03-05","bounce_rate":0.0786,"engagement_rate":0.9214,"average_session_duration":360.89,"screen_page_views_per_session":2.71},{"date":"2026-03-10","bounce_rate":0.0959,"engagement_rate":0.9041,"average_session_duration":247.43,"screen_page_views_per_session":2.73},{"date":"2026-03-13","bounce_rate":0.0357,"engagement_rate":0.9643,"average_session_duration":210.36,"screen_page_views_per_session":2.84},{"date":"2026-03-16","bounce_rate":0.0453,"engagement_rate":0.9547,"average_session_duration":185.43,"screen_page_views_per_session":2.59},{"date":"2026-03-17","bounce_rate":0.0676,"engagement_rate":0.9324,"average_session_duration":207.59,"screen_page_views_per_session":2.72},{"date":"2026-03-18","bounce_rate":0.0623,"engagement_rate":0.9377,"average_session_duration":181.16,"screen_page_views_per_session":2.69},{"date":"2026-03-19","bounce_rate":0.0493,"engagement_rate":0.9507,"average_session_duration":221.41,"screen_page_views_per_session":2.74},{"date":"2026-03-20","bounce_rate":0.0584,"engagement_rate":0.9416,"average_session_duration":196.56,"screen_page_views_per_session":2.71},{"date":"2026-03-24","bounce_rate":0.0436,"engagement_rate":0.9564,"average_session_duration":193.43,"screen_page_views_per_session":3.26},{"date":"2026-03-25","bounce_rate":0.0601,"engagement_rate":0.9399,"average_session_duration":196.17,"screen_page_views_per_session":2.75},{"date":"2026-03-27","bounce_rate":0.0503,"engagement_rate":0.9497,"average_session_duration":211.17,"screen_page_views_per_session":2.68},{"date":"2026-04-02","bounce_rate":0.0516,"engagement_rate":0.9484,"average_session_duration":216.46,"screen_page_views_per_session":2.69},{"date":"2026-04-07","bounce_rate":0.0741,"engagement_rate":0.9259,"average_session_duration":280.28,"screen_page_views_per_session":3.16},{"date":"2026-04-10","bounce_rate":0.0244,"engagement_rate":0.9756,"average_session_duration":211.11,"screen_page_views_per_session":2.82},{"date":"2026-04-13","bounce_rate":0.029,"engagement_rate":0.971,"average_session_duration":268.0,"screen_page_views_per_session":3.33},{"date":"2026-04-17","bounce_rate":0.0393,"engagement_rate":0.9607,"average_session_duration":187.0,"screen_page_views_per_session":2.64},{"date":"2026-04-18","bounce_rate":0.0189,"engagement_rate":0.9811,"average_session_duration":121.03,"screen_page_views_per_session":3.09},{"date":"2026-04-19","bounce_rate":0.0224,"engagement_rate":0.9776,"average_session_duration":107.67,"screen_page_views_per_session":2.72},{"date":"2026-04-20","bounce_rate":0.0492,"engagement_rate":0.9508,"average_session_duration":147.94,"screen_page_views_per_session":2.9},{"date":"2026-04-21","bounce_rate":0.0316,"engagement_rate":0.9684,"average_session_duration":186.5,"screen_page_views_per_session":3.02}];
+
+const conversionRaw=[{"date":"2026-01-05","conversions":106,"conversions_formsubmit":0,"conversions_ga4thankyoupage":0,"conversions_call_click":0,"conversions_form_submission":0},{"date":"2026-01-07","conversions":105,"conversions_formsubmit":0,"conversions_ga4thankyoupage":5,"conversions_call_click":0,"conversions_form_submission":0},{"date":"2026-01-08","conversions":102,"conversions_formsubmit":0,"conversions_ga4thankyoupage":1,"conversions_call_click":2,"conversions_form_submission":0},{"date":"2026-01-19","conversions":87,"conversions_formsubmit":0,"conversions_ga4thankyoupage":0,"conversions_call_click":10,"conversions_form_submission":0},{"date":"2026-01-20","conversions":96,"conversions_formsubmit":0,"conversions_ga4thankyoupage":0,"conversions_call_click":4,"conversions_form_submission":0},{"date":"2026-01-21","conversions":99,"conversions_formsubmit":0,"conversions_ga4thankyoupage":3,"conversions_call_click":6,"conversions_form_submission":0},{"date":"2026-01-22","conversions":108,"conversions_formsubmit":0,"conversions_ga4thankyoupage":1,"conversions_call_click":4,"conversions_form_submission":0},{"date":"2026-01-26","conversions":148,"conversions_formsubmit":0,"conversions_ga4thankyoupage":2,"conversions_call_click":6,"conversions_form_submission":0},{"date":"2026-01-28","conversions":118,"conversions_formsubmit":0,"conversions_ga4thankyoupage":1,"conversions_call_click":0,"conversions_form_submission":0},{"date":"2026-02-10","conversions":84,"conversions_formsubmit":14,"conversions_ga4thankyoupage":1,"conversions_call_click":0,"conversions_form_submission":6},{"date":"2026-02-11","conversions":94,"conversions_formsubmit":4,"conversions_ga4thankyoupage":0,"conversions_call_click":0,"conversions_form_submission":2},{"date":"2026-02-12","conversions":120,"conversions_formsubmit":6,"conversions_ga4thankyoupage":0,"conversions_call_click":0,"conversions_form_submission":3},{"date":"2026-02-16","conversions":100,"conversions_formsubmit":12,"conversions_ga4thankyoupage":2,"conversions_call_click":2,"conversions_form_submission":4},{"date":"2026-02-17","conversions":128,"conversions_formsubmit":10,"conversions_ga4thankyoupage":2,"conversions_call_click":6,"conversions_form_submission":3},{"date":"2026-02-18","conversions":119,"conversions_formsubmit":6,"conversions_ga4thankyoupage":0,"conversions_call_click":0,"conversions_form_submission":3},{"date":"2026-02-19","conversions":124,"conversions_formsubmit":6,"conversions_ga4thankyoupage":0,"conversions_call_click":12,"conversions_form_submission":3},{"date":"2026-02-25","conversions":106,"conversions_formsubmit":8,"conversions_ga4thankyoupage":2,"conversions_call_click":4,"conversions_form_submission":2},{"date":"2026-02-27","conversions":101,"conversions_formsubmit":8,"conversions_ga4thankyoupage":1,"conversions_call_click":0,"conversions_form_submission":3},{"date":"2026-03-10","conversions":293,"conversions_formsubmit":10,"conversions_ga4thankyoupage":3,"conversions_call_click":6,"conversions_form_submission":3},{"date":"2026-03-11","conversions":244,"conversions_formsubmit":16,"conversions_ga4thankyoupage":2,"conversions_call_click":0,"conversions_form_submission":6},{"date":"2026-03-16","conversions":947,"conversions_formsubmit":26,"conversions_ga4thankyoupage":2,"conversions_call_click":0,"conversions_form_submission":11},{"date":"2026-03-17","conversions":1005,"conversions_formsubmit":24,"conversions_ga4thankyoupage":4,"conversions_call_click":24,"conversions_form_submission":8},{"date":"2026-03-18","conversions":1118,"conversions_formsubmit":28,"conversions_ga4thankyoupage":3,"conversions_call_click":16,"conversions_form_submission":11},{"date":"2026-03-19","conversions":1065,"conversions_formsubmit":12,"conversions_ga4thankyoupage":0,"conversions_call_click":8,"conversions_form_submission":6},{"date":"2026-03-20","conversions":940,"conversions_formsubmit":6,"conversions_ga4thankyoupage":1,"conversions_call_click":20,"conversions_form_submission":2},{"date":"2026-03-24","conversions":1143,"conversions_formsubmit":6,"conversions_ga4thankyoupage":0,"conversions_call_click":8,"conversions_form_submission":3},{"date":"2026-03-25","conversions":1123,"conversions_formsubmit":22,"conversions_ga4thankyoupage":2,"conversions_call_click":38,"conversions_form_submission":9},{"date":"2026-03-26","conversions":1063,"conversions_formsubmit":30,"conversions_ga4thankyoupage":3,"conversions_call_click":8,"conversions_form_submission":12},{"date":"2026-03-27","conversions":1190,"conversions_formsubmit":14,"conversions_ga4thankyoupage":1,"conversions_call_click":16,"conversions_form_submission":6},{"date":"2026-04-08","conversions":285,"conversions_formsubmit":10,"conversions_ga4thankyoupage":1,"conversions_call_click":64,"conversions_form_submission":4},{"date":"2026-04-17","conversions":916,"conversions_formsubmit":10,"conversions_ga4thankyoupage":0,"conversions_call_click":32,"conversions_form_submission":5},{"date":"2026-04-18","conversions":886,"conversions_formsubmit":6,"conversions_ga4thankyoupage":1,"conversions_call_click":32,"conversions_form_submission":2},{"date":"2026-04-19","conversions":1142,"conversions_formsubmit":0,"conversions_ga4thankyoupage":0,"conversions_call_click":20,"conversions_form_submission":0},{"date":"2026-04-20","conversions":1766,"conversions_formsubmit":12,"conversions_ga4thankyoupage":2,"conversions_call_click":445,"conversions_form_submission":4},{"date":"2026-04-21","conversions":1350,"conversions_formsubmit":8,"conversions_ga4thankyoupage":0,"conversions_call_click":8,"conversions_form_submission":4}];
+
+const channelData=[{"channel":"Organic Search","users":11303,"sessions":14196},{"channel":"Direct","users":6097,"sessions":8206},{"channel":"Paid Video","users":4538,"sessions":4859},{"channel":"Paid Search","users":1756,"sessions":2163},{"channel":"Display","users":1113,"sessions":1311},{"channel":"Cross-network","users":677,"sessions":738},{"channel":"Unassigned","users":500,"sessions":506},{"channel":"Paid Other","users":215,"sessions":217},{"channel":"Referral","users":119,"sessions":168},{"channel":"Organic Social","users":109,"sessions":138},{"channel":"Paid Social","users":6,"sessions":8}];
+
+const pageData=[{t:"Humanica | Workplaze HR | ERP",v:9490},{t:"Humanica Solutions | Workplaze HR",v:7888},{t:"ERP Software - Enterprise Resource Planning",v:4587},{t:"ระบบ HR โซลูชันบริหารจัดการทรัพยากรบุคคล",v:3980},{t:"SAP Business One | HUMANICA",v:3782},{t:"Oracle NetSuite - Humanica",v:3569},{t:"วิธีการคิด OT พนักงาน HR",v:1868},{t:"Contact Us | Offices | Demo | Humanica",v:1533},{t:"เกี่ยวกับเรา | ฮิวแมนิก้า",v:1489},{t:"10 คำถามสัมภาษณ์งานยอดฮิต",v:1438}];
+
+const eventData=[{e:"page_view",c:88480},{e:"session_start",c:32126},{e:"user_engagement",c:30872},{e:"first_visit",c:25735},{e:"scroll",c:8622},{e:"file_download",c:1149},{e:"click",c:1038},{e:"call_click",c:1024},{e:"FormSubmit",c:492},{e:"form_submission",c:203}];
+
+const acqData=[{"default_channel_group":"Organic Search","sessions":14431,"users":11146,"conversions":15193,"engagement_rate":0.876,"bounce_rate":0.124,"screen_page_views":37514},{"default_channel_group":"Direct","sessions":6766,"users":5767,"conversions":7094,"engagement_rate":0.8794,"bounce_rate":0.1206,"screen_page_views":23355},{"default_channel_group":"Paid Video","sessions":4622,"users":4299,"conversions":4827,"engagement_rate":0.9479,"bounce_rate":0.0521,"screen_page_views":10213},{"default_channel_group":"Paid Search","sessions":2168,"users":1789,"conversions":2859,"engagement_rate":0.8916,"bounce_rate":0.1084,"screen_page_views":6731},{"default_channel_group":"Display","sessions":1268,"users":1077,"conversions":1300,"engagement_rate":0.9645,"bounce_rate":0.0355,"screen_page_views":3060},{"default_channel_group":"Cross-network","sessions":516,"users":516,"conversions":553,"engagement_rate":0.7248,"bounce_rate":0.2752,"screen_page_views":1450},{"default_channel_group":"Unassigned","sessions":487,"users":480,"conversions":59,"engagement_rate":0.0986,"bounce_rate":0.9014,"screen_page_views":852},{"default_channel_group":"Paid Other","sessions":234,"users":215,"conversions":255,"engagement_rate":0.9444,"bounce_rate":0.0556,"screen_page_views":512},{"default_channel_group":"Referral","sessions":212,"users":139,"conversions":243,"engagement_rate":0.8491,"bounce_rate":0.1509,"screen_page_views":754},{"default_channel_group":"Organic Social","sessions":144,"users":112,"conversions":144,"engagement_rate":0.9028,"bounce_rate":0.0972,"screen_page_views":381}];
+
+// ═══ HELPERS ═══════════════════════════════════════════════════════════════
+const allTraffic = {};
+[...traffic2025,...traffic2026].forEach(r=>allTraffic[r.date]=r);
+
+const fmt = n => n>=1000?(n/1000).toFixed(1)+'K':n.toLocaleString();
+const pct = n => (n*100).toFixed(1)+'%';
+const fmtSec = s => s>=60?(s/60).toFixed(1)+'min':Math.round(s)+'s';
+const COLORS=['#3b82f6','#10b981','#8b5cf6','#f59e0b','#ef4444','#06b6d4','#f97316','#84cc16','#ec4899','#a78bfa','#34d399'];
+const ML={'2026-01':'Jan 26','2026-02':'Feb 26','2026-03':'Mar 26','2026-04':'Apr 26'};
+const gc='rgba(0,0,0,.05)', tc='#999';
+Chart.defaults.font.family="'Segoe UI',Arial,sans-serif";
+Chart.defaults.font.size=11;
+Chart.defaults.plugins.legend.labels.boxWidth=11;
+Chart.defaults.plugins.legend.labels.padding=10;
+
+const charts={};
+function dc(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+
+function filterRange(data,from,to){return data.filter(r=>r.date>=from&&r.date<=to);}
+function sum(arr,k){return arr.reduce((a,r)=>a+(r[k]||0),0);}
+function avg(arr,k){return arr.length?arr.reduce((a,r)=>a+(r[k]||0),0)/arr.length:0;}
+
+function delta(a,b){
+  if(!b) return {txt:'—',cls:'flat'};
+  const d=((a-b)/b*100);
+  return {txt:(d>=0?'+':'')+d.toFixed(1)+'%', cls:d>0?'up':d<0?'down':'flat'};
+}
+
+function fmtDate(d){
+  if(!d) return '';
+  const [y,m,day]=d.split('-');
+  const mn=['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${mn[+m]} ${+day}, ${y}`;
+}
+
+// ═══ YTD FILTER ════════════════════════════════════════════════════════════
+let ytdFrom='2026-01-01', ytdTo='2026-04-22';
+
+function applyPreset(p,btn){
+  document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  let f,t;
+  if(p==='all'){f='2026-01-01';t='2026-04-22';}
+  if(p==='jan'){f='2026-01-01';t='2026-01-31';}
+  if(p==='feb'){f='2026-02-01';t='2026-02-28';}
+  if(p==='mar'){f='2026-03-01';t='2026-03-31';}
+  if(p==='apr'){f='2026-04-01';t='2026-04-22';}
+  if(p==='last30'){f='2026-03-23';t='2026-04-22';}
+  document.getElementById('ytd-from').value=f;
+  document.getElementById('ytd-to').value=t;
+  setYTD(f,t);
+}
+function applyYTD(){
+  const f=document.getElementById('ytd-from').value;
+  const t=document.getElementById('ytd-to').value;
+  if(!f||!t||f>t){alert('Invalid date range');return;}
+  document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));
+  setYTD(f,t);
+}
+function setYTD(f,t){
+  ytdFrom=f; ytdTo=t;
+  document.getElementById('ytd-badge').textContent=`${fmtDate(f)} – ${fmtDate(t)}`;
+  document.getElementById('header-sub').textContent=`Humanica - GA4  ·  ${fmtDate(f)} – ${fmtDate(t)}`;
+  renderOverview();
+  renderEngagement();
+  renderConversions();
+}
+
+// ═══ COMPARISON ════════════════════════════════════════════════════════════
+let cmpAFrom='2026-02-01', cmpATo='2026-02-28';
+let cmpBFrom='2025-02-01', cmpBTo='2025-02-28';
+
+function runComparison(){
+  cmpAFrom=document.getElementById('cmp-a-from').value;
+  cmpATo=document.getElementById('cmp-a-to').value;
+  cmpBFrom=document.getElementById('cmp-b-from').value;
+  cmpBTo=document.getElementById('cmp-b-to').value;
+  if(cmpAFrom>cmpATo||cmpBFrom>cmpBTo){alert('Invalid comparison dates');return;}
+  document.getElementById('cmp-result-label').textContent=
+    `${fmtDate(cmpAFrom)} – ${fmtDate(cmpATo)}  vs  ${fmtDate(cmpBFrom)} – ${fmtDate(cmpBTo)}`;
+  renderComparison();
+}
+
+function renderComparison(){
+  // Build period arrays
+  const pA=[], pB=[];
+  let d=new Date(cmpAFrom);
+  while(d.toISOString().slice(0,10)<=cmpATo){
+    const dt=d.toISOString().slice(0,10);
+    pA.push(allTraffic[dt]||{date:dt,sessions:0,users:0,newusers:0,screen_page_views:0});
+    d.setDate(d.getDate()+1);
+  }
+  d=new Date(cmpBFrom);
+  while(d.toISOString().slice(0,10)<=cmpBTo){
+    const dt=d.toISOString().slice(0,10);
+    pB.push(allTraffic[dt]||{date:dt,sessions:0,users:0,newusers:0,screen_page_views:0});
+    d.setDate(d.getDate()+1);
+  }
+
+  // KPI Cards
+  const aS=sum(pA,'sessions'), bS=sum(pB,'sessions');
+  const aU=sum(pA,'users'),    bU=sum(pB,'users');
+  const aP=sum(pA,'screen_page_views'), bP=sum(pB,'screen_page_views');
+  const aN=sum(pA,'newusers'), bN=sum(pB,'newusers');
+
+  document.getElementById('kpi-a-sess').textContent=fmt(aS);
+  document.getElementById('kpi-b-sess').textContent=fmt(bS);
+  const ds=delta(aS,bS);
+  document.getElementById('delta-sess').textContent=ds.txt;
+  document.getElementById('delta-sess').className='kpi-delta '+ds.cls;
+
+  document.getElementById('kpi-a-users').textContent=fmt(aU);
+  document.getElementById('kpi-b-users').textContent=fmt(bU);
+  const du=delta(aU,bU);
+  document.getElementById('delta-users').textContent=du.txt;
+  document.getElementById('delta-users').className='kpi-delta '+du.cls;
+
+  document.getElementById('kpi-a-pv').textContent=fmt(aP);
+  document.getElementById('kpi-b-pv').textContent=fmt(bP);
+  const dp=delta(aP,bP);
+  document.getElementById('delta-pv').textContent=dp.txt;
+  document.getElementById('delta-pv').className='kpi-delta '+dp.cls;
+
+  document.getElementById('kpi-a-new').textContent=fmt(aN);
+  document.getElementById('kpi-b-new').textContent=fmt(bN);
+  const dn=delta(aN,bN);
+  document.getElementById('delta-new').textContent=dn.txt;
+  document.getElementById('delta-new').className='kpi-delta '+dn.cls;
+
+  // Comparison line chart
+  const maxDays=Math.max(pA.length,pB.length);
+  const dayLabels=Array.from({length:maxDays},(_,i)=>`Day ${i+1}`);
+  dc('chart-cmp-line');
+  charts['chart-cmp-line']=new Chart(document.getElementById('chart-cmp-line'),{
+    type:'line',
+    data:{labels:dayLabels,datasets:[
+      {label:`Period A (${cmpAFrom.slice(0,7)})`,data:pA.map(r=>r.sessions),borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.12)',fill:true,tension:.35,pointRadius:0,borderWidth:2.5},
+      {label:`Period B (${cmpBFrom.slice(0,7)})`,data:pB.map(r=>r.sessions),borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.1)',fill:true,tension:.35,pointRadius:0,borderWidth:2.5}
+    ]},
+    options:{responsive:true,maintainAspectRatio:true,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'top'}},
+      scales:{x:{grid:{color:gc},ticks:{color:tc,maxTicksLimit:10}},y:{grid:{color:gc},ticks:{color:tc}}}}
+  });
+
+  // Channel comparison (total sessions for each period)
+  dc('chart-channel-cmp');
+  charts['chart-channel-cmp']=new Chart(document.getElementById('chart-channel-cmp'),{
+    type:'bar',
+    data:{labels:['Period A','Period B'],datasets:[{
+      data:[aS,bS],
+      backgroundColor:['rgba(59,130,246,.8)','rgba(245,158,11,.8)'],
+      borderRadius:6
+    }]},
+    options:{responsive:true,maintainAspectRatio:true,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`Sessions: ${ctx.raw.toLocaleString()}`}}},
+      scales:{x:{grid:{display:false},ticks:{color:tc}},y:{grid:{color:gc},ticks:{color:tc}}}}
+  });
+}
+
+// ═══ OVERVIEW ══════════════════════════════════════════════════════════════
+function renderOverview(){
+  const traffic=filterRange(traffic2026,ytdFrom,ytdTo);
+
+  // YTD line chart
+  dc('chart-ytd-line');
+  charts['chart-ytd-line']=new Chart(document.getElementById('chart-ytd-line'),{
+    type:'line',
+    data:{
+      labels:traffic.map(r=>r.date.slice(5)),
+      datasets:[
+        {label:'Sessions',data:traffic.map(r=>r.sessions),borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.1)',fill:true,tension:.3,pointRadius:0,borderWidth:2},
+        {label:'Users',data:traffic.map(r=>r.users),borderColor:'#10b981',backgroundColor:'rgba(16,185,129,.08)',fill:true,tension:.3,pointRadius:0,borderWidth:1.5}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:true,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'top'}},
+      scales:{x:{grid:{color:gc},ticks:{color:tc,maxTicksLimit:12}},y:{grid:{color:gc},ticks:{color:tc}}}}
+  });
+
+  // Channel YTD bar
+  dc('chart-channel-ytd');
+  charts['chart-channel-ytd']=new Chart(document.getElementById('chart-channel-ytd'),{
+    type:'bar',
+    data:{
+      labels:channelData.map(r=>r.channel),
+      datasets:[
+        {label:'Users',data:channelData.map(r=>r.users),backgroundColor:'rgba(59,130,246,.8)',borderRadius:4},
+        {label:'Sessions',data:channelData.map(r=>r.sessions),backgroundColor:'rgba(16,185,129,.6)',borderRadius:4}
+      ]
+    },
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:true,
+      plugins:{legend:{position:'top'}},
+      scales:{x:{grid:{color:gc},ticks:{color:tc}},y:{grid:{display:false},ticks:{color:tc,font:{size:10}}}}}
+  });
+
+  // Pages top 10
+  dc('chart-pages');
+  charts['chart-pages']=new Chart(document.getElementById('chart-pages'),{
+    type:'bar',
+    data:{
+      labels:pageData.map(r=>r.t),
+      datasets:[{label:'Page Views',data:pageData.map(r=>r.v),backgroundColor:COLORS.slice(0,10).map(c=>c+'cc'),borderRadius:5}]
+    },
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:true,
+      plugins:{legend:{display:false}},
+      scales:{x:{grid:{color:gc},ticks:{color:tc}},
+        y:{grid:{display:false},ticks:{color:tc,font:{size:9},callback:v=>v.length>35?v.slice(0,35)+'…':v}}}}
+  });
+
+  // Events top 10
+  dc('chart-events');
+  charts['chart-events']=new Chart(document.getElementById('chart-events'),{
+    type:'bar',
+    data:{
+      labels:eventData.map(r=>r.e),
+      datasets:[{label:'Event Count',data:eventData.map(r=>r.c),backgroundColor:COLORS.slice(0,10).map(c=>c+'cc'),borderRadius:5}]
+    },
+    options:{responsive:true,maintainAspectRatio:true,
+      plugins:{legend:{display:false}},
+      scales:{x:{grid:{color:gc},ticks:{color:tc}},y:{grid:{display:false},ticks:{color:tc}}}}
+  });
+}
+
+// ═══ ENGAGEMENT ════════════════════════════════════════════════════════════
+function renderEngagement(){
+  const eng=filterRange(engagementRaw,ytdFrom,ytdTo);
+  document.getElementById('kpi-eng').textContent=pct(avg(eng,'engagement_rate'));
+  document.getElementById('kpi-bnc').textContent=pct(avg(eng,'bounce_rate'));
+  document.getElementById('kpi-dur').textContent=fmtSec(avg(eng,'average_session_duration'));
+  document.getElementById('kpi-pps').textContent=avg(eng,'screen_page_views_per_session').toFixed(2);
+  const labels=eng.map(r=>r.date.slice(5));
+  dc('chart-eng');
+  charts['chart-eng']=new Chart(document.getElementById('chart-eng'),{
+    type:'line',
+    data:{labels,datasets:[
+      {label:'Engagement Rate',data:eng.map(r=>(r.engagement_rate*100).toFixed(1)),borderColor:'#10b981',backgroundColor:'rgba(16,185,129,.1)',fill:true,tension:.4,pointRadius:0,borderWidth:2},
+      {label:'Bounce Rate',data:eng.map(r=>(r.bounce_rate*100).toFixed(1)),borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,.08)',fill:true,tension:.4,pointRadius:0,borderWidth:2}
+    ]},
+    options:{responsive:true,maintainAspectRatio:true,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'top'}},
+      scales:{x:{grid:{color:gc},ticks:{color:tc,maxTicksLimit:12}},y:{grid:{color:gc},ticks:{color:tc,callback:v=>v+'%'},min:0,max:100}}}
+  });
+  dc('chart-dur');
+  charts['chart-dur']=new Chart(document.getElementById('chart-dur'),{
+    type:'line',data:{labels,datasets:[{label:'Duration(s)',data:eng.map(r=>Math.min(r.average_session_duration,900)),borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.1)',fill:true,tension:.4,pointRadius:0,borderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:gc},ticks:{color:tc,maxTicksLimit:10}},y:{grid:{color:gc},ticks:{color:tc,callback:v=>v+'s'}}}}
+  });
+  dc('chart-pps-ch');
+  charts['chart-pps-ch']=new Chart(document.getElementById('chart-pps-ch'),{
+    type:'line',data:{labels,datasets:[{label:'Pages/Session',data:eng.map(r=>r.screen_page_views_per_session.toFixed(2)),borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,.1)',fill:true,tension:.4,pointRadius:0,borderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:gc},ticks:{color:tc,maxTicksLimit:10}},y:{grid:{color:gc},ticks:{color:tc}}}}
+  });
+}
+
+// ═══ CONVERSIONS ═══════════════════════════════════════════════════════════
+function renderConversions(){
+  const conv=filterRange(conversionRaw,ytdFrom,ytdTo);
+  const tot=sum(conv,'conversions'), call=sum(conv,'conversions_call_click');
+  const form=sum(conv,'conversions_formsubmit')+sum(conv,'conversions_form_submission');
+  const ty=sum(conv,'conversions_ga4thankyoupage');
+  document.getElementById('kpi-conv').textContent=fmt(tot);
+  document.getElementById('kpi-call').textContent=fmt(call);
+  document.getElementById('kpi-form').textContent=fmt(form);
+  document.getElementById('kpi-ty').textContent=fmt(ty);
+  const labels=conv.map(r=>r.date.slice(5));
+  dc('chart-conv');
+  charts['chart-conv']=new Chart(document.getElementById('chart-conv'),{
+    type:'line',
+    data:{labels,datasets:[
+      {label:'Total',data:conv.map(r=>r.conversions),borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.1)',fill:true,tension:.3,pointRadius:0,borderWidth:2},
+      {label:'Call Clicks',data:conv.map(r=>r.conversions_call_click),borderColor:'#f59e0b',tension:.3,pointRadius:0,borderWidth:1.5,borderDash:[4,3]},
+      {label:'Forms',data:conv.map(r=>r.conversions_formsubmit+r.conversions_form_submission),borderColor:'#10b981',tension:.3,pointRadius:0,borderWidth:1.5,borderDash:[4,3]}
+    ]},
+    options:{responsive:true,maintainAspectRatio:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top'}},scales:{x:{grid:{color:gc},ticks:{color:tc,maxTicksLimit:12}},y:{grid:{color:gc},ticks:{color:tc}}}}
+  });
+  const other=tot-call-form-ty;
+  dc('chart-conv-donut');
+  charts['chart-conv-donut']=new Chart(document.getElementById('chart-conv-donut'),{
+    type:'doughnut',
+    data:{labels:['Call Clicks','Form Submits','Thank You','Other'],datasets:[{data:[call,form,ty,other],backgroundColor:['#f59e0b','#10b981','#8b5cf6','#3b82f6'],borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmt(ctx.raw)}`}}},cutout:'62%'}
+  });
+  const mConv={};
+  conv.forEach(r=>{const k=r.date.slice(0,7);if(!mConv[k])mConv[k]=0;mConv[k]+=r.conversions;});
+  const months=Object.keys(mConv).sort();
+  dc('chart-conv-monthly');
+  charts['chart-conv-monthly']=new Chart(document.getElementById('chart-conv-monthly'),{
+    type:'bar',
+    data:{labels:months.map(m=>ML[m]||m),datasets:[{label:'Conversions',data:months.map(m=>mConv[m]),backgroundColor:COLORS.slice(0,months.length),borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:tc}},y:{grid:{color:gc},ticks:{color:tc}}}}
+  });
+}
+
+// ═══ ACQUISITION (static) ══════════════════════════════════════════════════
+function renderAcquisition(){
+  const top=acqData.sort((a,b)=>b.sessions-a.sessions);
+  const totS=top.reduce((a,r)=>a+r.sessions,0);
+  dc('chart-acq-bar');
+  charts['chart-acq-bar']=new Chart(document.getElementById('chart-acq-bar'),{
+    type:'bar',
+    data:{labels:top.map(r=>r.default_channel_group),datasets:[{label:'Sessions',data:top.map(r=>r.sessions),backgroundColor:COLORS.slice(0,top.length),borderRadius:5}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:gc},ticks:{color:tc}},y:{grid:{display:false},ticks:{color:tc,font:{size:10}}}}}
+  });
+  dc('chart-acq-donut');
+  charts['chart-acq-donut']=new Chart(document.getElementById('chart-acq-donut'),{
+    type:'doughnut',
+    data:{labels:top.map(r=>r.default_channel_group),datasets:[{data:top.map(r=>r.sessions),backgroundColor:COLORS.slice(0,top.length),borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'bottom',labels:{font:{size:9}}},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmt(ctx.raw)} (${pct(ctx.raw/totS)})`}}},cutout:'60%'}
+  });
+  const tbl=document.getElementById('acq-table');
+  const maxS=Math.max(...top.map(r=>r.sessions));
+  tbl.innerHTML=`<thead><tr><th>Channel</th><th>Sessions</th><th>Users</th><th>Conversions</th><th>Eng.Rate</th><th>Bounce</th></tr></thead>`;
+  const tbody=document.createElement('tbody');
+  top.forEach((r,i)=>{
+    const bw=Math.round((r.sessions/maxS)*90);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><span class="ch-dot" style="background:${COLORS[i]}"></span>${r.default_channel_group}</td><td><div class="bar-cell"><div class="bar-mini" style="width:${bw}px;background:${COLORS[i]}"></div><span>${r.sessions.toLocaleString()}</span></div></td><td>${r.users.toLocaleString()}</td><td>${r.conversions.toLocaleString()}</td><td>${pct(r.engagement_rate)}</td><td>${pct(r.bounce_rate)}</td>`;
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody);
+}
+
+// ═══ TABS ══════════════════════════════════════════════════════════════════
+function showTab(name,e){
+  document.querySelectorAll('.tab-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(e)e.target.classList.add('active');
+}
+
+// ═══ INIT ══════════════════════════════════════════════════════════════════
+renderOverview();
+renderEngagement();
+renderConversions();
+renderAcquisition();
+runComparison();
+</script>
+</body>
+</html>
